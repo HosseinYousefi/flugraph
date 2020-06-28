@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class HomePage extends HookWidget {
   static const wpm = 15;
-  static const dot = 1200 / wpm;
+  static const dot = 1200 ~/ wpm;
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,19 @@ class HomePage extends HookWidget {
               },
               onTapUp: (details) {
                 final diff = DateTime.now().difference(lastTapState.value);
-                if (diff.inMilliseconds < dot) {
+                if (diff.inMilliseconds <= dot) {
                   messageState.value += '.';
                 } else {
                   messageState.value += '-';
                 }
+                lastTapState.value = DateTime.now();
+                Timer(
+                  const Duration(milliseconds: 7 * dot),
+                  () => {
+                    if (DateTime.now().difference(lastTapState.value).inMilliseconds >= 7 * dot)
+                      {messageState.value += ' '}
+                  },
+                );
               },
               child: CircleAvatar(
                 backgroundColor: Colors.grey[700],
